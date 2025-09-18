@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { theme } from '../theme';
+import { ThemeDefinition, useAppTheme } from '../theme';
 
 interface SectionHeaderProps {
   title: string;
@@ -8,6 +8,9 @@ interface SectionHeaderProps {
 }
 
 export function SectionHeader({ title, action }: SectionHeaderProps) {
+  const { theme } = useAppTheme();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>
@@ -16,18 +19,19 @@ export function SectionHeader({ title, action }: SectionHeaderProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: theme.spacing(2)
-  },
-  title: {
-    ...theme.typography.headline,
-    color: theme.colors.text
-  },
-  action: {
-    marginLeft: theme.spacing(2)
-  }
-});
+const createStyles = (theme: ThemeDefinition) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: theme.spacing(theme.name === 'retro' ? 2.5 : 2)
+    },
+    title: {
+      ...theme.typography.headline,
+      color: theme.colors.text
+    },
+    action: {
+      marginLeft: theme.spacing(2)
+    }
+  });

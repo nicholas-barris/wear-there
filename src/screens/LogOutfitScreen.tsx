@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Chip } from '../components/Chip';
 import { useWearThere } from '../hooks/useWearThere';
-import { theme } from '../theme';
+import { ThemeDefinition, useAppTheme } from '../theme';
 import { ClosetStackParamList } from '../navigation/types';
 import { DressCode } from '../types';
 
@@ -26,6 +26,9 @@ export function LogOutfitScreen({ navigation }: LogOutfitScreenProps) {
   const [notes, setNotes] = useState('');
   const [pieces, setPieces] = useState('');
   const [image, setImage] = useState('');
+  const { theme } = useAppTheme();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+  const placeholderColor = theme.colors.muted;
 
   const handleSubmit = () => {
     if (!restaurantId || !title.trim()) {
@@ -63,7 +66,7 @@ export function LogOutfitScreen({ navigation }: LogOutfitScreenProps) {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
       <Text style={styles.screenTitle}>Log what you wore</Text>
 
       <Text style={styles.sectionLabel}>Restaurant</Text>
@@ -94,6 +97,7 @@ export function LogOutfitScreen({ navigation }: LogOutfitScreenProps) {
       <TextInput
         style={styles.input}
         placeholder="Velvet blazer & silver shimmer"
+        placeholderTextColor={placeholderColor}
         value={title}
         onChangeText={setTitle}
       />
@@ -104,6 +108,7 @@ export function LogOutfitScreen({ navigation }: LogOutfitScreenProps) {
         multiline
         numberOfLines={4}
         placeholder="How did it feel? Anything you would remix next time?"
+        placeholderTextColor={placeholderColor}
         value={notes}
         onChangeText={setNotes}
       />
@@ -112,6 +117,7 @@ export function LogOutfitScreen({ navigation }: LogOutfitScreenProps) {
       <TextInput
         style={styles.input}
         placeholder="Sequin midi dress, Pearl hoops, Strappy heels"
+        placeholderTextColor={placeholderColor}
         value={pieces}
         onChangeText={setPieces}
       />
@@ -120,6 +126,7 @@ export function LogOutfitScreen({ navigation }: LogOutfitScreenProps) {
       <TextInput
         style={styles.input}
         placeholder="https://"
+        placeholderTextColor={placeholderColor}
         value={image}
         onChangeText={setImage}
       />
@@ -131,52 +138,61 @@ export function LogOutfitScreen({ navigation }: LogOutfitScreenProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    padding: theme.spacing(5),
-    gap: theme.spacing(4),
-    backgroundColor: theme.colors.background
-  },
-  screenTitle: {
-    ...theme.typography.title,
-    color: theme.colors.text
-  },
-  sectionLabel: {
-    ...theme.typography.label,
-    color: theme.colors.muted
-  },
-  chipGroup: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: theme.spacing(2)
-  },
-  input: {
-    backgroundColor: theme.colors.card,
-    borderRadius: theme.radius.lg,
-    paddingHorizontal: theme.spacing(4),
-    paddingVertical: theme.spacing(3),
-    fontSize: 16,
-    color: theme.colors.text,
-    shadowColor: theme.colors.shadow,
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 2
-  },
-  inputMultiline: {
-    minHeight: 120,
-    textAlignVertical: 'top'
-  },
-  primaryButton: {
-    marginTop: theme.spacing(4),
-    backgroundColor: theme.colors.text,
-    paddingVertical: theme.spacing(4),
-    borderRadius: theme.radius.xl,
-    alignItems: 'center'
-  },
-  buttonText: {
-    ...theme.typography.headline,
-    fontSize: 18,
-    color: theme.colors.card
-  }
-});
+const createStyles = (theme: ThemeDefinition) =>
+  StyleSheet.create({
+    container: {
+      padding: theme.spacing(5),
+      gap: theme.spacing(4),
+      backgroundColor: theme.colors.background,
+      paddingBottom: theme.spacing(10)
+    },
+    screenTitle: {
+      ...theme.typography.title,
+      color: theme.colors.text
+    },
+    sectionLabel: {
+      ...theme.typography.label,
+      color: theme.colors.muted
+    },
+    chipGroup: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: theme.spacing(2)
+    },
+    input: {
+      backgroundColor: theme.colors.inputBackground,
+      borderRadius: theme.radius.lg,
+      paddingHorizontal: theme.spacing(4),
+      paddingVertical: theme.spacing(3),
+      fontSize: 16,
+      color: theme.colors.text,
+      borderWidth: theme.name === 'glass' ? 1 : 0,
+      borderColor: theme.colors.inputBorder,
+      shadowColor: theme.shadows.input.shadowColor,
+      shadowOpacity: theme.shadows.input.shadowOpacity,
+      shadowRadius: theme.shadows.input.shadowRadius,
+      shadowOffset: theme.shadows.input.shadowOffset,
+      elevation: theme.shadows.input.elevation
+    },
+    inputMultiline: {
+      minHeight: 120,
+      textAlignVertical: 'top'
+    },
+    primaryButton: {
+      marginTop: theme.spacing(4),
+      backgroundColor: theme.colors.accent,
+      paddingVertical: theme.spacing(4),
+      borderRadius: theme.radius.xl,
+      alignItems: 'center',
+      shadowColor: theme.shadows.pop.shadowColor,
+      shadowOpacity: theme.shadows.pop.shadowOpacity,
+      shadowRadius: theme.shadows.pop.shadowRadius,
+      shadowOffset: theme.shadows.pop.shadowOffset,
+      elevation: theme.shadows.pop.elevation
+    },
+    buttonText: {
+      ...theme.typography.headline,
+      fontSize: 18,
+      color: theme.colors.buttonTextOnAccent
+    }
+  });
